@@ -5,6 +5,7 @@ import { initDatabase, getProdutos, toggleProdutoStatus, deleteProduto } from '.
 import { useFocusEffect } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
+import { ScrollView } from 'react-native-reanimated/lib/typescript/Animated';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -72,35 +73,37 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.container}>
-                <Text style={styles.header}>Lista de Compras</Text>
+            
+            <Text style={styles.header}>Lista de Compras</Text>
+                
+                    <FlatList style={styles.scroolList}
+                        data={lista.filter(item => item.checked === 0)}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => (
+                            <View style={styles.item}>
+                                <TouchableOpacity onPress={() => handleToggleChecked(item.id, item.checked === 1)} style={styles.checkbox}>
+                                    {item.checked === 1 ? 
+                                        <FontAwesome name="check-square" size={24} color="green" /> : 
+                                        <FontAwesome name="square-o" size={24} color="black" />}
+                                </TouchableOpacity>
+                                <Text style={styles.itemText}>{item.nome}</Text>
+                                <TouchableOpacity 
+                                    onPress={() => navigation.navigate('Adicionar', { editMode: true, produto: item })} 
+                                    style={styles.icon}
+                                >
+                                    <FontAwesome name="pencil" size={20} color="blue" />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.icon}>
+                                    <FontAwesome name="trash" size={20} color="red" />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    />
+                
 
-                <FlatList
-                    data={lista.filter(item => item.checked === 0)}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <View style={styles.item}>
-                            <TouchableOpacity onPress={() => handleToggleChecked(item.id, item.checked === 1)} style={styles.checkbox}>
-                                {item.checked === 1 ? 
-                                    <FontAwesome name="check-square" size={24} color="green" /> : 
-                                    <FontAwesome name="square-o" size={24} color="black" />}
-                            </TouchableOpacity>
-                            <Text style={styles.itemText}>{item.nome}</Text>
-                            <TouchableOpacity 
-                                onPress={() => navigation.navigate('Adicionar', { editMode: true, produto: item })} 
-                                style={styles.icon}
-                            >
-                                <FontAwesome name="pencil" size={20} color="blue" />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.icon}>
-                                <FontAwesome name="trash" size={20} color="red" />
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                />
-
-                <Text style={styles.subheader}>Comprado</Text>
-                <FlatList
+            <Text style={styles.subheader}>Comprado</Text>
+                
+                <FlatList style={styles.scroolList02}
                     data={lista.filter(item => item.checked === 1)}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
@@ -116,14 +119,14 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                         </View>
                     )}
                 />
-
+                
                 <TouchableOpacity 
                     style={styles.addButton}
                     onPress={() => navigation.navigate('Adicionar', { editMode: false })}
                 >
                     <Text style={styles.addButtonText}>+</Text>
                 </TouchableOpacity>
-            </View>
+            
         </SafeAreaView>
     );
 }
@@ -133,6 +136,14 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         backgroundColor: '#fff',
+    },
+    scroolList:{
+        height: '60%',
+        marginTop: 5,
+    },
+    scroolList02:{
+        height: '20%',
+        marginTop: 5,
     },
     header: {
         fontSize: 24,
