@@ -1,27 +1,44 @@
-import { SafeAreaView } from 'react-native';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StatusBar } from 'expo-status-bar';
-
 import HomeScreen from './screens/HomeScreen';
-import MesesScreen from './screens/MesesScreen';
 import AdicionarScreen from './screens/AdicionarScreen';
 import IndexScreen from './screens/IndexScreen';
 
-const Stack = createStackNavigator();
+export type RootStackParamList = {
+  Home: undefined;
+  Adicionar: {
+    editMode: boolean;
+    produto?: {
+      id: number;
+      nome: string;
+      checked: number;
+    };
+  };
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
-	return (
-			<SafeAreaView style={{ flex: 1 }}>
-					<NavigationContainer>
-						<Stack.Navigator initialRouteName='Index'>
-							<Stack.Screen name="Index" component={IndexScreen} />
-							<Stack.Screen name="Home" component={HomeScreen} />
-							<Stack.Screen name="Meses" component={MesesScreen} />
-							<Stack.Screen name="Adicionar" component={AdicionarScreen} />
-						</Stack.Navigator>
-					</NavigationContainer>
-					<StatusBar style="auto" />
-			</SafeAreaView>
-	);
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Inicio">
+				<Stack.Screen 
+          name="Inicio" 
+          component={IndexScreen} 
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name="Home" 
+          component={HomeScreen} 
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name="Adicionar" 
+          component={AdicionarScreen} 
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
